@@ -1,0 +1,9 @@
+name: poetry.boostrap
+channels:
+  - defaults
+dependencies:
+  - flask
+  - pip
+  - pip:
+    - poetry>=1.2.0b2
+

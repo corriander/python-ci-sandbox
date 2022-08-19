@@ -1,0 +1,31 @@
+stages:
+- stage:
+  jobs:
+  - template: templates/jobs/poetry-bootstrap.yml
+    parameters:
+      python.version: 3.8
+      run.additional_steps:
+      - bash: |
+          eval "$(conda shell.bash hook)"
+          conda activate $CONDA_ENV
+          echo "##[debug]Inside conda environment ${CONDA_ENV}; poetry install"
+          poetry install
+        displayName: "poetry: install package"
+
+      - script: |
+          eval "$(conda shell.bash hook)"
+          source activate $CONDA_ENV
+          poetry run pytest \
+              --junitxml=reports/unit-test-results.xml \
+              --cov=ci_sandbox \
+              --cov-report=xml \
+              --cov-append \
+              ci_sandbox
+        workingDirectory: $(Build.SourcesDirectory)
+        displayName: 'poetry: Run unit tests'
+
+      - task: PublishCodeCoverageResults@1
+        inputs:
+          codeCoverageTool: Cobertura
+          summaryFileLocation: '$(Pipeline.Workspace)/**/coverage.xml'
+        displayName: Publish code coverage

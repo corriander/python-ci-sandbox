@@ -1,0 +1,62 @@
+parameters:
+- name: python.version
+  type: string
+- name: python.conda.environment_file
+  type: string
+  default: ci/conda/poetry-bootstrap-env.yaml
+- name: python.poetry.pipeline_pytest_integration
+  type: boolean
+  default: true
+- name: run.additional_steps
+  type: stepList
+  default: []
+
+
+jobs:
+- job:
+  steps:
+  - bash: |
+      curl -sSL https://install.python-poetry.org | python3 - --preview
+      poetry --version || ( echo "Failed to get poetry version" && exit 1 )
+    displayName: "poetry: Install"
+
+  - bash: |
+      poetry self add \
+        artifacts-keyring \
+        poetry-dynamic-versioning-plugin \
+    displayName: "poetry: Add packaging dependencies"
+
+  - bash: |
+      echo "##vso[task.prependpath]$CONDA/bin"
+
+      path=${{ parameters['python.conda.environment_file'] }}
+      [ -f $path ] || { echo "##vso[task.logissue type=error]Conda environment file not found: $path" && exit 1; }
+
+      CONDA_ENV=$(grep -Po '(?<=name:).*(?= *)' $path)-${{ parameters['python.version'] }}
+      echo "##vso[task.setvariable variable=conda_env]$CONDA_ENV"
+    displayName: "azp: initialise conda"
+
+  - bash: |
+      conda create --yes --name $CONDA_ENV python=${{ parameters['python.version'] }}
+      echo "##[debug]Conda environment created: ${CONDA_ENV}"
+    displayName: "conda: Create bootstrap environment"
+
+  - bash: |
+      conda env update --quiet --name $CONDA_ENV --file ${{ parameters['python.conda.environment_file'] }}
+    displayName: "conda: Populate bootstrap environment"
+
+  - bash: |
+      conda env list
+      eval "$(conda shell.bash hook)"
+      conda activate ${CONDA_ENV}
+      conda list
+    displayName: "conda: Verify environment"
+
+  - bash: |
+      eval "$(conda shell.bash hook)"
+      conda activate ${CONDA_ENV}
+      poetry add pytest-azurepipelines
+    condition: and(succeeded(), eq('${{ parameters['python.poetry.pipeline_pytest_integration'] }}', 'True'))
+    displayName: "poetry: Install pytest integration"
+
+  - ${{ parameters['run.additional_steps'] }}
