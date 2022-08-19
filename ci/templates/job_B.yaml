@@ -1,0 +1,10 @@
+parameters:
+- name: pkg.version
+  type: string
+
+jobs:
+- job: TJB1
+  steps:
+  - bash: |
+      echo "Output variable value from A11: ${{ parameters['pkg.version'] }}"
+    displayName: Check Output Var

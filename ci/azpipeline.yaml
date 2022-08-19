@@ -20,8 +20,11 @@ stages:
   - job: B1
     variables:
       pkg.version.job: $[ stageDependencies.A.A1.outputs['A11.pkg.version'] ]
-    steps: 
+    steps:
     - bash: |
         echo "pkg.version (stage): "$(pkg.version.stage)
         echo "pkg.version (job): "$(pkg.version.job)
       displayName: Check vars
+  - template: templates/job_B.yaml
+    parameters:
+      pkg.version: ${{ variables['pkg.version.job'] }}
