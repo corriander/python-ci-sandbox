@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "python-ci-sandbox"
+version = "0.0.0"
+description = "Lightweight project to exercise CI automation strategies"
+authors = ["Alex Corrie <ajccode@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "ci_sandbox"}]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+packaging = "^21.3"
+
+[tool.poetry.group.dev.dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning"]
+build-backend = "poetry.core.masonry.api"
