@@ -1,10 +1,13 @@
 parameters:
-- name: pkg.version
+- name: param1
+  type: string
+- name: param2
   type: string
 
 jobs:
 - job: TJB1
   steps:
   - bash: |
-      echo "Output variable value from A11: ${{ parameters['pkg.version'] }}"
+      echo "Output variable value from A11: ${{ parameters['param1'] }}"
+      echo "Output variable value from TJA11: ${{ parameters['param2'] }}"
     displayName: Check Output Var
