@@ -27,4 +27,4 @@ stages:
       displayName: Check vars
   - template: templates/job_B.yaml
     parameters:
-      pkg.version: ${{ variables['pkg.version.job'] }}
+      pkg.version: $(pkg.version.stage)
