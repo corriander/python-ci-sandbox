@@ -10,12 +10,18 @@ stages:
     steps:
     - bash: echo "##vso[task.setvariable variable=pkg.version;isOutput=true]9.9.9"
       name: A11
+      displayName: Create vars
 
 - stage: B
   dependsOn: A
   variables:
-    pkg.version: $[ dependencies.A.outputs['A1.A11.pkg.version'] ]
+    pkg.version.stage: $[ dependencies.A.outputs['A1.A11.pkg.version'] ]
   jobs:
   - job: B1
+    variables:
+      pkg.version.job: $[ stageDependencies.A.A1.outputs['A11.pkg.version'] ]
     steps: 
-    - bash: echo $(pkg.version)
+    - bash: |
+        echo "pkg.version (stage): "$(pkg.version.stage)
+        echo "pkg.version (job): "$(pkg.version.job)
+      displayName: Check vars
