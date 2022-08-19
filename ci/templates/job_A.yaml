@@ -1,0 +1,6 @@
+jobs:
+- job: TJA1
+  steps:
+  - bash: echo "##vso[task.setvariable variable=pkg.version;isOutput=true]8.8.8"
+    name: TJA11
+    displayName: Set Output Var
