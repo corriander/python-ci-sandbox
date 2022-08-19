@@ -1,0 +1,13 @@
+steps:
+- task: PythonScript@0
+  displayName: Report Environment Variables
+  inputs:
+    scriptSource: inline
+    script: |
+      import os
+      print('##[group]Environment Variables')
+      max_key_length = max(len(k) for k in os.environ.keys())
+      format_string = f'##[debug]{{:>{max_key_length}}}: {{}}'
+      for k, v in sorted(os.environ.items()):
+        print(format_string.format(k, v))
+      print('##[endgroup]')

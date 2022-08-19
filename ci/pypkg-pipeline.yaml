@@ -1,3 +1,8 @@
+parameters:
+- name: python.pytest.suppress_warnings
+  type: string
+  default: 'ignore:string with gap:DeprecationWarning'
+
 stages:
 - stage:
   jobs:
@@ -12,17 +17,41 @@ stages:
           poetry install
         displayName: "poetry: install package"
 
+      - bash: |
+          suppress_warnings="${{ parameters['python.pytest.suppress_warnings'] }}"
+          echo "##[debug]${suppress_warnings}"
+
+          if [ ! -z "$suppress_warnings" ]
+          then
+            echo "##vso[task.logissue type=warning]Suppressing pytest warnings: ${suppress_warnings}"
+            echo "##vso[task.setvariable variable=suppress_warnings_args]-W ${suppress_warnings} "
+          fi
+        displayName: Process warning suppression parameter
+
+      - template: templates/steps/report-env-vars.yaml
+
       - script: |
           eval "$(conda shell.bash hook)"
           source activate $CONDA_ENV
+          echo poetry run pytest \
+              --junitxml=reports/unit-test-results.xml \
+              --cov=ci_sandbox \
+              --cov-report=xml \
+              --cov-append \
+              ci_sandbox \
+              "${SUPPRESS_WARNINGS_ARGS}"
+
           poetry run pytest \
               --junitxml=reports/unit-test-results.xml \
               --cov=ci_sandbox \
               --cov-report=xml \
               --cov-append \
-              ci_sandbox
+              ci_sandbox \
+              "${SUPPRESS_WARNINGS_ARGS}"
         workingDirectory: $(Build.SourcesDirectory)
         displayName: 'poetry: Run unit tests'
+        env:
+          SUPPRESS_WARNING_ARGS: "$(variables.suppress_warnings_args)"
 
       - task: PublishCodeCoverageResults@1
         inputs:
