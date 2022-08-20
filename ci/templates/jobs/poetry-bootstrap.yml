@@ -15,16 +15,7 @@ parameters:
 jobs:
 - job:
   steps:
-  - bash: |
-      curl -sSL https://install.python-poetry.org | python3 - --preview
-      poetry --version || ( echo "Failed to get poetry version" && exit 1 )
-    displayName: "poetry: Install"
 
-  - bash: |
-      poetry self add \
-        artifacts-keyring \
-        poetry-dynamic-versioning-plugin \
-    displayName: "poetry: Add packaging dependencies"
 
   - bash: |
       echo "##vso[task.prependpath]$CONDA/bin"
@@ -49,6 +40,14 @@ jobs:
       conda env list
       conda list --name ${CONDA_ENV}
     displayName: "conda: Verify environment"
+
+  - bash: |
+      eval "$(conda shell.bash hook)"
+      conda activate ${CONDA_ENV}
+      poetry self add \
+        artifacts-keyring \
+        poetry-dynamic-versioning-plugin \
+    displayName: "poetry: Add packaging dependencies"
 
   - template: ../steps/conda-run.yaml
     parameters:
