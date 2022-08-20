@@ -31,9 +31,7 @@ stages:
       - template: templates/steps/report-env-vars.yaml
 
       - script: |
-          eval "$(conda shell.bash hook)"
-          source activate $CONDA_ENV
-          echo poetry run pytest \
+          echo conda run -n $CONDA_ENV poetry run pytest \
               --junitxml=reports/unit-test-results.xml \
               --cov=ci_sandbox \
               --cov-report=xml \
@@ -41,7 +39,7 @@ stages:
               ci_sandbox \
               "${SUPPRESS_WARNINGS_ARGS}"
 
-          poetry run pytest \
+          conda run -n $CONDA_ENV poetry run pytest \
               --junitxml=reports/unit-test-results.xml \
               --cov=ci_sandbox \
               --cov-report=xml \
