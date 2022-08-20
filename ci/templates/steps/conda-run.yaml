@@ -1,0 +1,12 @@
+parameters:
+- name: display_name
+  type: string
+- name: command_string
+  type: string
+
+
+steps:
+- bash: |
+    echo "##[command]conda run --name ${CONDA_ENV} ${{ parameters['command_string'] }}"
+    conda run --name ${CONDA_ENV} ${{ parameters['command_string'] }}
+  displayName: "${{ parameters['display_name'] }}"

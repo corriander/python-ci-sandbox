@@ -47,16 +47,12 @@ jobs:
 
   - bash: |
       conda env list
-      eval "$(conda shell.bash hook)"
-      conda activate ${CONDA_ENV}
-      conda list
+      conda list --name ${CONDA_ENV}
     displayName: "conda: Verify environment"
 
-  - bash: |
-      eval "$(conda shell.bash hook)"
-      conda activate ${CONDA_ENV}
-      poetry add pytest-azurepipelines
-    condition: and(succeeded(), eq('${{ parameters['python.poetry.pipeline_pytest_integration'] }}', 'True'))
-    displayName: "poetry: Install pytest integration"
+  - template: ../steps/conda-run.yaml
+    parameters:
+      display_name: "poetry: Install pytest integration"
+      command_string: poetry add pytest-azurepipelines
 
   - ${{ parameters['run.additional_steps'] }}
