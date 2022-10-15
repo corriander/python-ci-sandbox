@@ -23,6 +23,7 @@ stages:
         echo "##[debug]Variable: ${VARIABLE}"
       name: A2A31
   - job: A4
+    dependsOn: A2A3
     variables:
       dependencies: $[ convertToJson(dependencies) ]
     steps:
