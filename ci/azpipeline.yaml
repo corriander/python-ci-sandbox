@@ -46,4 +46,4 @@ stages:
     variables:
       X: $[ stageDependencies.A.jobA2.outputs['A2A31.jobA2'] ]
     steps:
-    - bash: echo 
+    - bash: echo $X
