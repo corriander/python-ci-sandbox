@@ -26,6 +26,7 @@ stages:
     dependsOn: A2A3
     variables:
       dependencies: $[ convertToJson(dependencies) ]
+      outputs: $[ convertToJson(dependencies.A2A3.outputs) ]
     steps:
     - bash: echo "${DEPENDENCIES}"
       displayName: Job Dependencies
