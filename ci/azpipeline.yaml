@@ -1,3 +1,4 @@
+# https://stackoverflow.com/a/60521040
 trigger: none
 
 stages:
@@ -18,7 +19,7 @@ stages:
           VARIABLE: A3Value
     steps:
     - bash: |
-        echo "##vso[task.setvariable variable=output.variable;setOutput=true]${VARIABLE}"
+        echo "##vso[task.setvariable variable=outputVar;isOutput=true]${VARIABLE}"
         echo "##[debug]Job name: ${SYSTEM_JOBNAME}"
         echo "##[debug]Variable: ${VARIABLE}"
       name: A2A31
@@ -27,8 +28,8 @@ stages:
     variables:
       dependencies: $[ convertToJson(dependencies) ]
       outputs: $[ convertToJson(dependencies.A2A3.outputs) ]
-      output.variable.from.a2: $[ dependencies.A2A3.outputs['A2.output.variable'] ]
-      output.variable.from.a3: $[ dependencies.A2A3.outputs['A3.output.variable'] ]
+      output.variable.from.a2: $[ dependencies.A2A3.outputs['A2.outputVar'] ]
+      output.variable.from.a3: $[ dependencies.A2A3.outputs['A3.outputVar'] ]
     steps:
     - bash: |
         echo "${DEPENDENCIES}"
@@ -43,7 +44,7 @@ stages:
     # Syntax is important here. Only runtime expressions work (stageDependencies doesn't exist yet)
     pkg.version.stage.set_in_main: $[ stageDependencies.A.A1.outputs['A11.pkg.version'] ]
     pkg.version.stage.set_in_template: $[ stageDependencies.A.TJA1.outputs['TJA11.pkg.version']]
-    x.set_in_main: $[ stageDependencies.A.A2.outputs['A2A31.output.variable'] ]
+    x.set_in_main: $[ stageDependencies.A.A2.outputs['A2A31.outputVar'] ]
     stage_dependencies: $[ convertToJson(stageDependencies) ]
   jobs:
   - job: B1
@@ -63,7 +64,7 @@ stages:
       param2: $(pkg.version.stage.set_in_template)
   - job: B2
     variables:
-      X: $[ stageDependencies.A.A2.outputs['A2A31.output.variable'] ]
+      X: $[ stageDependencies.A.A2.outputs['A2A31.outputVar'] ]
       Z: 2
     steps:
     - bash: echo "$STAGE_DEPENDENCIES"
