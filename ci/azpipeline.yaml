@@ -28,7 +28,9 @@ stages:
       dependencies: $[ convertToJson(dependencies) ]
       outputs: $[ convertToJson(dependencies.A2A3.outputs) ]
     steps:
-    - bash: echo "${DEPENDENCIES}"
+    - bash: |
+        echo "${DEPENDENCIES}"
+        echo "${OUTPUTS}"
       displayName: Job Dependencies
 
 - stage: B
