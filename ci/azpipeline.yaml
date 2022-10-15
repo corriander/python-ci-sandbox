@@ -27,13 +27,11 @@ stages:
     dependsOn: A2A3
     variables:
       dependencies: $[ convertToJson(dependencies) ]
-      outputs: $[ convertToJson(dependencies.A2A3.outputs) ]
       output.variable.from.a2: $[ dependencies.A2A3.outputs['A2.outputVar'] ]
       output.variable.from.a3: $[ dependencies.A2A3.outputs['A3.outputVar'] ]
     steps:
     - bash: |
         echo "${DEPENDENCIES}"
-        echo "${OUTPUTS}"
         echo "${OUTPUT_VARIABLE_FROM_A2}"
         echo "${OUTPUT_VARIABLE_FROM_A3}"
       displayName: Job Dependencies
@@ -46,6 +44,7 @@ stages:
     pkg.version.stage.set_in_template: $[ stageDependencies.A.TJA1.outputs['TJA11.pkg.version']]
     x.set_in_main: $[ stageDependencies.A.A2.outputs['A2A31.outputVar'] ]
     stage_dependencies: $[ convertToJson(stageDependencies) ]
+    dependencies: $[ convertToJson(dependencies) ]
   jobs:
   - job: B1
     variables:
@@ -67,6 +66,8 @@ stages:
       X: $[ stageDependencies.A.A2.outputs['A2A31.outputVar'] ]
       Z: 2
     steps:
+    - bash: echo "$DEPENDENCIES"
+      displayName: Dependencies
     - bash: echo "$STAGE_DEPENDENCIES"
       displayName: Stage Dependencies
     - bash: |
