@@ -27,10 +27,14 @@ stages:
     variables:
       dependencies: $[ convertToJson(dependencies) ]
       outputs: $[ convertToJson(dependencies.A2A3.outputs) ]
+      output.variable.from.a2: $[ dependencies.A2A3.outputs['A2.output.variable'] ]
+      output.variable.from.a3: $[ dependencies.A2A3.outputs['A3.output.variable'] ]
     steps:
     - bash: |
         echo "${DEPENDENCIES}"
         echo "${OUTPUTS}"
+        echo "${OUTPUT_VARIABLE_FROM_A2}"
+        echo "${OUTPUT_VARIABLE_FROM_A3}"
       displayName: Job Dependencies
 
 - stage: B
