@@ -22,6 +22,12 @@ stages:
         echo "##[debug]Job name: ${SYSTEM_JOBNAME}"
         echo "##[debug]Variable: ${VARIABLE}"
       name: A2A31
+  - job: A4
+    variables:
+      dependencies: $[ convertToJson(dependencies) ]
+    steps:
+    - bash: echo "${DEPENDENCIES}"
+      displayName: Job Dependencies
 
 - stage: B
   dependsOn: A
@@ -52,7 +58,9 @@ stages:
       X: $[ stageDependencies.A.A2.outputs['A2A31.output.variable'] ]
       Z: 2
     steps:
+    - bash: echo "$STAGE_DEPENDENCIES"
+      displayName: Stage Dependencies
     - bash: |
         echo "X: $X"
         echo "Z: $Z"
-        echo "$STAGE_DEPENDENCIES"
+      displayName: X Inaccessible
