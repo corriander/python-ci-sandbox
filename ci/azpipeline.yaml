@@ -29,6 +29,8 @@ stages:
     # Syntax is important here. Only runtime expressions work (stageDependencies doesn't exist yet)
     pkg.version.stage.set_in_main: $[ stageDependencies.A.A1.outputs['A11.pkg.version'] ]
     pkg.version.stage.set_in_template: $[ stageDependencies.A.TJA1.outputs['TJA11.pkg.version']]
+    x.set_in_main: $[ stageDependencies.A.A2.outputs['A2A31.output.variable'] ]
+    stage_dependencies: $[ convertToJson(stageDependencies) ]
   jobs:
   - job: B1
     variables:
@@ -48,5 +50,9 @@ stages:
   - job: B2
     variables:
       X: $[ stageDependencies.A.A2.outputs['A2A31.output.variable'] ]
+      Z: 2
     steps:
-    - bash: echo $X
+    - bash: |
+        echo "X: $X"
+        echo "Z: $Z"
+        echo "$STAGE_DEPENDENCIES"
