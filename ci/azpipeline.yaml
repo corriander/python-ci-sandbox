@@ -12,12 +12,12 @@ stages:
   - job: A2A3
     strategy:
       matrix:
-        jobA2:
+        A2:
           VARIABLE: A2Value
-        jobA3:
+        A3:
           VARIABLE: A3Value
     steps:
-    - bash: echo "##vso[task.setvariable variable=${SYSTEM_JOBNAME};setOutput=true]${VARIABLE}"
+    - bash: echo "##vso[task.setvariable variable=output.variable;setOutput=true]${VARIABLE}"
       name: A2A31
 
 - stage: B
@@ -44,6 +44,6 @@ stages:
       param2: $(pkg.version.stage.set_in_template)
   - job: B2
     variables:
-      X: $[ stageDependencies.A.jobA2.outputs['A2A31.jobA2'] ]
+      X: $[ stageDependencies.A.A2.outputs['A2A31.output.variable'] ]
     steps:
     - bash: echo $X
